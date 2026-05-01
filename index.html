@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sterling Suggester | Find Your Perfect UK Bank</title>
+    <style>
+        :root {
+            --gov-blue: #005ea5;
+            --gov-black: #0b0c0c;
+            --gov-grey: #f3f2f1;
+            --gov-border: #b1b4b6;
+            --accent-green: #00703c;
+            --error-red: #d4351c;
+        }
+
+        body {
+            font-family: "GDS Transport", Arial, sans-serif;
+            background-color: var(--gov-grey);
+            color: var(--gov-black);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #000;
+            color: #fff;
+            padding: 15px 30px;
+            border-bottom: 8px solid var(--gov-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-text { font-weight: bold; font-size: 1.4rem; letter-spacing: 1px; }
+
+        .main-content {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 40px;
+            border: 1px solid var(--gov-border);
+            flex-grow: 1;
+        }
+
+        .hero-section { border-bottom: 2px solid var(--gov-grey); margin-bottom: 30px; padding-bottom: 20px; }
+        
+        .progress-container {
+            width: 100%;
+            background: var(--gov-grey);
+            height: 8px;
+            margin-bottom: 30px;
+        }
+        #progress-bar { width: 33%; height: 100%; background: var(--gov-blue); transition: 0.4s; }
+
+        .question-card { display: none; animation: fadeIn 0.5s ease; }
+        .active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        label { display: block; font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; }
+        
+        .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .radio-btn {
+            border: 2px solid var(--gov-black);
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .radio-btn:hover { background: var(--gov-grey); border-color: var(--gov-blue); }
+        .selected { background: var(--gov-blue) !important; color: white; }
+
+        .btn-group { margin-top: 30px; display: flex; gap: 10px; }
+        .gov-btn {
+            background: var(--accent-green);
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-bottom: 3px solid #002d18;
+            cursor: pointer;
+        }
+        .gov-btn-back { background: var(--gov-border); border-bottom: 3px solid #666; }
+
+        .result-item {
+            border: 3px solid var(--gov-blue);
+            margin-bottom: 20px;
+            padding: 25px;
+            position: relative;
+        }
+        .match-score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--gov-blue);
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+        }
+        .pros { color: #00703c; font-weight: bold; margin-bottom: 5px; }
+        .cons { color: #d4351c; font-size: 0.9rem; }
+
+        footer {
+            background: #0b0c0c;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        .made-by { font-style: italic; color: #b1b4b6; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-text">STERLING SUGGESTER</div>
+    <div style="font-size: 0.8rem;">UK SERVICE DESIGN v2.0</div>
+</header>
+
+<div class="main-content">
+    <div class="progress-container"><div id="progress-bar"></div></div>
+
+    <div id="quiz-container">
+        <!-- Question 1 -->
+        <div class="question-card active" id="q1">
+            <label>What’s your banking style?</label>
+            <div class="option-grid">
+                <div class="radio-btn" onclick="selectOption('q1', 'digital')">Modern & App-Only</div>
+                <div class="radio-btn" onclick="selectOption('q1', 'branch')">Traditional / High Street</div>
+            </div>
+            <div class="btn-group">
+                <button class="gov-btn" onclick="nextStep(2)">Continue</button>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="question-card" id="q2">
+            <label>What is your top priority right now?</label>
+            <div class="option-grid">
+                <div class="radio-btn" onclick="selectOption('q2', 'savings')">High Interest Savings</div>
+                <div class="radio-btn" onclick="selectOption('q2', 'travel')">Traveling (No Fees)</div>
+                <div class="radio-btn" onclick="selectOption('q2', 'cashback')">Cashback Rewards</div>
+                <div class="radio-btn" onclick="selectOption('q2', 'credit')">Building Credit</div>
+            </div>
+            <div class="btn-group">
+                <button class="gov-btn gov-btn-back" onclick="nextStep(1)">Back</button>
+                <button class="gov-btn" onclick="nextStep(3)">Continue</button>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="question-card" id="q3">
+            <label>How old are you?</label>
+            <div class="option-grid">
+                <div class="radio-btn" onclick="selectOption('q3', 'student')">18-24 (Student)</div>
+                <div class="radio-btn" onclick="selectOption('q3', 'adult')">25+ (Standard)</div>
+            </div>
+            <div class="btn-group">
+                <button class="gov-btn gov-btn-back" onclick="nextStep(2)">Back</button>
+                <button class="gov-btn" onclick="calculateResults()">See My Matches</button>
+            </div>
+        </div>
+
+        <div id="results-area" style="display:none;">
+            <h2>Your Best Matches</h2>
+            <div id="results-list"></div>
+            <button class="gov-btn" style="margin-top:20px;" onclick="location.reload()">Start Over</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 Sterling Suggester UK. All rights reserved.</p>
+    <div class="made-by">Made with precision by <strong>Sadab</strong></div>
+</footer>
+
+<script>
+    const userChoices = { q1: '', q2: '', q3: '' };
+
+    const bankData = [
+        { name: "Monzo", tags: ["digital", "travel"], age: ["student", "adult"], pros: "Best App UI, Shared Tabs", cons: "Limited high-street presence", link: "https://monzo.com" },
+        { name: "Starling", tags: ["digital", "travel"], age: ["adult"], pros: "Free ATM abroad, 24/7 Support", cons: "No physical branches", link: "https://starlingbank.com" },
+        { name: "Chase UK", tags: ["digital", "savings", "cashback"], age: ["adult"], pros: "1% Cashback, High Savings Rate", cons: "No cash deposits", link: "https://chase.co.uk" },
+        { name: "Nationwide", tags: ["branch", "savings"], age: ["adult", "student"], pros: "Fairer Share Payments, Reliable", cons: "App feels slightly dated", link: "https://nationwide.co.uk" },
+        { name: "Santander", tags: ["branch", "cashback"], age: ["student", "adult"], pros: "Edge Account rewards", cons: "Monthly account fees may apply", link: "https://santander.co.uk" },
+        { name: "HSBC", tags: ["branch", "travel", "credit"], age: ["student", "adult"], pros: "Global Transfer features", cons: "Strict eligibility", link: "https://hsbc.co.uk" }
+    ];
+
+    function selectOption(q, val) {
+        userChoices[q] = val;
+        const btns = document.querySelectorAll(`#${q} .radio-btn`);
+        btns.forEach(b => b.classList.remove('selected'));
+        event.target.classList.add('selected');
+    }
+
+    function nextStep(step) {
+        document.querySelectorAll('.question-card').forEach(c => c.classList.remove('active'));
+        if(step <= 3) {
+            document.getElementById(`q${step}`).classList.add('active');
+            document.getElementById('progress-bar').style.width = (step * 33) + '%';
+        }
+    }
+
+    function calculateResults() {
+        document.getElementById('q3').classList.remove('active');
+        document.getElementById('progress-bar').style.width = '100%';
+        const resultsArea = document.getElementById('results-area');
+        const list = document.getElementById('results-list');
+        resultsArea.style.display = 'block';
+
+        let matches = bankData.map(bank => {
+            let score = 0;
+            if(bank.tags.includes(userChoices.q1)) score += 40;
+            if(bank.tags.includes(userChoices.q2)) score += 40;
+            if(bank.age.includes(userChoices.q3)) score += 20;
+            return { ...bank, score };
+        }).sort((a, b) => b.score - a.score);
+
+        list.innerHTML = matches.slice(0, 3).map(m => `
+            <div class="result-item">
+                <div class="match-score">${m.score}% Match</div>
+                <h3>${m.name}</h3>
+                <p class="pros">PROS: ${m.pros}</p>
+                <p class="cons">CONS: ${m.cons}</p>
+                <a href="${m.link}" target="_blank">Open Account →</a>
+            </div>
+        `).join('');
+    }
+</script>
+
+</body>
+</html>
